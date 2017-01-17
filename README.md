@@ -14,3 +14,12 @@ Zorg er voor het opstarten van roscore ervoor dat de IP-instellingen van de andr
 		om in ROS de juiste IP-instellingen aan te zetten
 
 	3. Voer op de android-app bij Robot URI in: http://<je eigen IP>:11311/
+
+Startup sequence:
+	
+	1. In terminal: roscore
+	2. Android telefoon aanzetten
+	3. In terminal: rosrun linefollower_34 linefollower_34_node image:=camera/image _image_transport:=compressed
+
+	eventueel:
+	1. In terminal: image_view image_view image:=camera/image _image_transport:=compressed
