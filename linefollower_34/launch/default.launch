@@ -1,0 +1,16 @@
+<launch>
+
+	<!--- Default linefollower_34 setup -->
+
+	<node pkg= "linefollower_34" name="linefollower_34" type="linefollower_34_node">
+		<param name="image" value="camera/image"/>
+		<param name="_image_transport" value="compressed"/>
+	</node>
+
+	<node pkg="image_view" name="image_view" type="image_view">
+		<param name="image" value="camera/image"/>
+		<param name="_image_transport" value="compressed"/>
+	</node>
+
+</launch>
+
