@@ -35,19 +35,21 @@ public:
 
 	void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 		// Convert ros-img to OpenCV
-		//sensor_msgs::CvBridge bridge;
-		//IplImage *img = bridge.imgMsgToCv(msg, "rgb8");
 		cv_bridge::CvImagePtr cv_ptr;
 
 		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
 
 		// Get image dimensions in pixels
-		int img_height = cv_ptr->image.rows;
-		int img_width = cv_ptr->image.cols;
+		img_height = cv_ptr->image.rows; 
+		img_width = cv_ptr->image.cols;
 
 		ROS_DEBUG("img_height = %d, img_width = %d\n", img_height, img_width);
 
 	}
+
+private:
+	int img_height; // Nexus 5: img_height = 768px
+	int img_width; // Nexus 5: img_width = 1280px
 };
 
 int main(int argc, char **argv) {
