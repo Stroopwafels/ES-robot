@@ -9,13 +9,14 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
-#include <opencv2/improc/improc.hpp>
-//#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 class ImageConverter {
 	ros::NodeHandle nh_;
 	image_transport::ImageTransport it_;
 	image_transport::Subscriber image_sub_;
+	image_transport::Publisher image_pub_;
 
 	ros::Publisher twist_pub_;
 
@@ -23,21 +24,35 @@ public:
 	ImageConverter():
 	it_(nh_) {
 		// Subscribe to the camera/image topic
-		image_sub_ = it_.subscribe("camera/image",1, &ImageConverter::imageCallback, this);
+		image_sub_ = it_.subscribe("camera/image", 1, &ImageConverter::imageCallback, this);
+
+		// Publish generated images on linefollower_34/output_video
+		image_pub_ = it_.advertise("linefollower_34/output_video", 1);
 
 		// Publish Twist messages on cmd_vel
 		twist_pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel",1000);
 	}
 
 	void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
-		
+		// Convert ros-img to OpenCV
+		//sensor_msgs::CvBridge bridge;
+		//IplImage *img = bridge.imgMsgToCv(msg, "rgb8");
+		cv_bridge::CvImagePtr cv_ptr;
+
+		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+
+		// Get image dimensions in pixels
+		int img_height = cv_ptr->image.rows;
+		int img_width = cv_ptr->image.cols;
+
+		ROS_DEBUG("img_height = %d, img_width = %d\n", img_height, img_width);
 
 	}
-}
+};
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char **argv) {
 	ros::init(argc, argv, "linefollower_34");
-
+	ImageConverter ic;
 
 	ros::spin();
 	return 0;

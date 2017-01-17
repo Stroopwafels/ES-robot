@@ -8,6 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  image_transport
+  cv_bridge
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,6 +141,14 @@ include_directories(
 # target_link_libraries(linefollower_34_node
 #   ${catkin_LIBRARIES}
 # )
+
+include_directories(include ${catkin_INCLUDE_DIRS})
+
+add_executable(linefollower_34_node src/linefollower_34.cpp)
+target_link_libraries(linefollower_34_node ${catkin_LIBRARIES})
+
+
+
 
 #############
 ## Install ##
