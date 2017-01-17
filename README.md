@@ -4,7 +4,7 @@ All packages for the line follower robot
 Zorg ervoor dat je ook OpenCV voor ros hebt geïnstalleerd:
 	sudo apt-get install ros-indigo-cv-bridge
 
-Zorg er voor het opstarten van roscore ervoor dat de IP-instellingen van de android telefoon en ROS goed zijn ingesteld (vervang <je eigen ip> inclusief haakjes):
+Zorg er voor het opstarten van roscore ervoor dat de IP-instellingen van de android telefoon en ROS goed zijn ingesteld:
 
 	1. In terminal: ifconfig
 		om je ip-adres te achterhalen.
