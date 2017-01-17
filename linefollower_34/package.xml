@@ -7,7 +7,8 @@
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="tom@todo.todo">tom</maintainer>
+  <maintainer email="t.k.vandermeulen@student.tudelft.nl">Tom van der Meulen</maintainer>
+  <maintainer email="levi@todo.todo">Levi Dekker</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -43,9 +44,17 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>opencv2</build_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>opencv2</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
