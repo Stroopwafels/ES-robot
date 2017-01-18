@@ -12,6 +12,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#define CONTOURS
+
 class ImageConverter {
 	ros::NodeHandle nh_;
 	image_transport::ImageTransport it_;
@@ -22,6 +24,8 @@ class ImageConverter {
 
 public:
 	ImageConverter():
+	img_height(768),
+	img_width(1280),
 	it_(nh_) {
 		// Subscribe to the camera/image topic
 		image_sub_ = it_.subscribe("camera/image", 1, &ImageConverter::imageCallback, this);
@@ -31,6 +35,8 @@ public:
 
 		// Publish Twist messages on cmd_vel
 		twist_pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel",1000);
+
+		assert(calc_style = "contours" | calc_style = "hough_lines")
 	}
 
 	void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
@@ -44,6 +50,7 @@ public:
 		img_width = cv_ptr->image.cols;
 
 		ROS_DEBUG("img_height = %d, img_width = %d\n", img_height, img_width);
+		
 
 	}
 
