@@ -12,8 +12,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#define CONTOURS
-
 class ImageConverter {
 	ros::NodeHandle nh_;
 	image_transport::ImageTransport it_;
@@ -35,8 +33,6 @@ public:
 
 		// Publish Twist messages on cmd_vel
 		twist_pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel",1000);
-
-		assert(calc_style = "contours" | calc_style = "hough_lines")
 	}
 
 	void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
@@ -44,38 +40,68 @@ public:
 		cv_bridge::CvImagePtr cv_ptr;
 
 		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+		
+		cv::Mat image_rot, imageROI, image_canny, image_lines;
 
-		// Get image dimensions in pixels
-		img_height = cv_ptr->image.rows; 
-		img_width = cv_ptr->image.cols;
+		cv::transpose(cv_ptr->image, image_rot);  // rotate 90 deg clockwise
+    	cv::flip(image_rot, image_rot, 1);
+
+    	image_lines = image_rot;
+
+    	// Get image dimensions in pixels
+		img_height = image_rot.rows; 
+		img_width = image_rot.cols;
 
 		ROS_DEBUG("img_height = %d, img_width = %d\n", img_height, img_width);
-		
-		cv::Mat image_canny, image_lines;
 
 		// Select ROI
-		cv::Mat imageROI = cv_ptr->image;
+		imageROI = image_rot;
 
 		// Image filters
-
+		
 		// Edge detection
-		cv::Canny(cv_ptr->image, image_canny, 50, 200, 3);
+		cv::Canny(imageROI, image_canny, 50, 200, 3);
 
 		// Probabilistic Hough Line transform
-		std::vector<Vec4i> lines;
+		std::vector<cv::Vec4i> lines;
 		cv::HoughLinesP(image_canny, lines, 1, CV_PI/180, 50, 50, 10 );
 
 		// Line analysis
+		int min_r = img_width / 2;
+		int min_cx = img_width / 2;
+		int min_cy = 0;
 		for(size_t i = 0; i<lines.size(); i++) {
-  			Vec4i l = lines[i];
-  			line( image_lines, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, CV_AA);
+  			cv::Vec4i l = lines[i];
+  			cv::line( image_lines, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0,0,255), 1, CV_AA);
+
+  			// Pick the line with the smallest horizontal distance to the center of the image
+  			int cx = (l[0] + l[2]) / 2;
+  			int cy = (l[1] + l[3]) / 2;
+  			int r = abs( cx - img_width / 2);
+  			if(r < min_r) {
+  				min_cx = cx;
+  				min_cy = cy;
+  				min_r = r;
+  			}
 		}
+
+		// Generate Twist message
+
+		// Create output image
+		cv::line(image_lines, cv::Point(0, min_cy), cv::Point(img_width, min_cy), cv::Scalar(255,0,0), 3, CV_AA);
+		cv::line(image_lines, cv::Point(min_cx, 0), cv::Point(min_cx, img_height), cv::Scalar(255,0,0), 3, CV_AA);
+
+		cv_ptr->image = image_lines;
+		image_pub_.publish(cv_ptr->toImageMsg());
+		ROS_INFO("Publishing new image\n");
+		//TODO: Publish image_lines
 	}
 
 private:
 	int img_height; // Nexus 5: img_height = 768px
 	int img_width; // Nexus 5: img_width = 1280px
 	
+
 	// ROI boundaries 
 	// float roi_up;
 	// float roi_down;

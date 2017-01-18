@@ -7,10 +7,19 @@
 		<param name="_image_transport" value="compressed"/>
 	</node>
 
-	<node pkg="image_view" name="image_view" type="image_view">
-		<param name="image" value="camera/image"/>
-		<param name="_image_transport" value="compressed"/>
-	</node>
+	<group ns="image_raw">
+		<node pkg="image_view" name="image_view" type="image_view">
+			<param name="image" value="camera/image"/>
+			<param name="_image_transport" value="compressed"/>
+		</node>
+	</group>
+
+	<group ns="image_lined">
+		<node pkg="image_view" name="image_view" type="image_view">
+			<param name="image" value="linefollower_34/output_video"/>
+			<param name="_image_transport" value="compressed"/>
+		</node>
+	</group>
 
 </launch>
 
