@@ -51,12 +51,36 @@ public:
 
 		ROS_DEBUG("img_height = %d, img_width = %d\n", img_height, img_width);
 		
+		cv::Mat image_canny, image_lines;
 
+		// Select ROI
+		cv::Mat imageROI = cv_ptr->image;
+
+		// Image filters
+
+		// Edge detection
+		cv::Canny(cv_ptr->image, image_canny, 50, 200, 3);
+
+		// Probabilistic Hough Line transform
+		std::vector<Vec4i> lines;
+		cv::HoughLinesP(image_canny, lines, 1, CV_PI/180, 50, 50, 10 );
+
+		// Line analysis
+		for(size_t i = 0; i<lines.size(); i++) {
+  			Vec4i l = lines[i];
+  			line( image_lines, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, CV_AA);
+		}
 	}
 
 private:
 	int img_height; // Nexus 5: img_height = 768px
 	int img_width; // Nexus 5: img_width = 1280px
+	
+	// ROI boundaries 
+	// float roi_up;
+	// float roi_down;
+	// float roi_left;
+	// float roi_right;
 };
 
 int main(int argc, char **argv) {
