@@ -17,9 +17,17 @@ Zorg er voor het opstarten van roscore ervoor dat de IP-instellingen van de andr
 
 Startup sequence:
 	
-	1. In terminal: roscore
-	2. Android telefoon aanzetten
-	3. In terminal: rosrun linefollower_34 linefollower_34_node image:=camera/image _image_transport:=compressed
+	1. In terminal: source devel/setup.bash
+	2. In terminal: roscore
+	3. Connect op Android telefoon
+	4. In terminal: rosrun linefollower_34 linefollower_34_node image:=camera/image _image_transport:=compressed
 
 	eventueel:
-	1. In terminal: image_view image_view image:=camera/image _image_transport:=compressed
+	1. In terminal: rosrun image_view image_view image:=linefollower_34/output_video _image_transport:=compressed
+	2. In terminal: rosrun image_view image_view image:=camera/image _image_transport:=compressed
+
+	OF
+
+	1. source devel/setup.bash
+	2. In terminal: roslaunch linefollower_34 default.launch
+	
