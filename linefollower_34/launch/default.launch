@@ -1,25 +1,27 @@
 <launch>
+<!--- Default linefollower_34 setup -->
 
-	<!--- Default linefollower_34 setup -->
+	<!-- Nodes -->
+	<node pkg= "linefollower_34" name="linefollower_34" type="linefollower_34_node" output="screen" args="image:=camera/image _image_transport:=compressed"/>
 
-	<node pkg= "linefollower_34" name="linefollower_34" type="linefollower_34_node">
-		<param name="image" value="camera/image"/>
-		<param name="_image_transport" value="compressed"/>
-	</node>
 
-	<group ns="image_raw">
+	<node pkg="image_view" name="image_raw" type="image_view" args="image:=camera/image _image_transport:=compressed"/>
+
+	<node pkg="image_view" name="image_lined" type="image_view" args="image:=linefollower_34/output_video _image_transport:=compressed"/>
+
+<!-- 	<group ns="image_raw">
 		<node pkg="image_view" name="image_view" type="image_view">
-			<param name="image" value="camera/image"/>
+			<!<param name="image" value="camera/image"/>
 			<param name="_image_transport" value="compressed"/>
 		</node>
-	</group>
+ 	</group>
 
 	<group ns="image_lined">
 		<node pkg="image_view" name="image_view" type="image_view">
 			<param name="image" value="linefollower_34/output_video"/>
 			<param name="_image_transport" value="compressed"/>
 		</node>
-	</group>
+	</group> -->
 
 </launch>
 

@@ -24,6 +24,10 @@ public:
 	ImageConverter():
 	img_height(768),
 	img_width(1280),
+	roi_up(0.5),
+	roi_down(1),
+	roi_left(0),
+	roi_right(1),
 	it_(nh_) {
 		// Subscribe to the camera/image topic
 		image_sub_ = it_.subscribe("camera/image", 1, &ImageConverter::imageCallback, this);
@@ -41,12 +45,12 @@ public:
 
 		cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
 		
-		cv::Mat image_rot, imageROI, image_canny, image_lines;
+		cv::Mat image_rot, image_roi, image_canny, image_lines;
 
 		cv::transpose(cv_ptr->image, image_rot);  // rotate 90 deg clockwise
     	cv::flip(image_rot, image_rot, 1);
 
-    	image_lines = image_rot;
+    	// image_lines = image_rot;
 
     	// Get image dimensions in pixels
 		img_height = image_rot.rows; 
@@ -55,12 +59,15 @@ public:
 		ROS_DEBUG("img_height = %d, img_width = %d\n", img_height, img_width);
 
 		// Select ROI
-		imageROI = image_rot;
+		// cv::Rect roi(roi_left*img_width, roi_up*img_height, roi_right*img_width, roi_down*img_height);
+		// image_roi = image_rot(roi);
+		image_roi = image_rot;
+		image_lines = image_roi;
 
 		// Image filters
 		
 		// Edge detection
-		cv::Canny(imageROI, image_canny, 50, 200, 3);
+		cv::Canny(image_roi, image_canny, 50, 200, 3);
 
 		// Probabilistic Hough Line transform
 		std::vector<cv::Vec4i> lines;
@@ -103,13 +110,14 @@ private:
 	
 
 	// ROI boundaries 
-	// float roi_up;
-	// float roi_down;
-	// float roi_left;
-	// float roi_right;
+	float roi_up;
+	float roi_down;
+	float roi_left;
+	float roi_right;
 };
 
 int main(int argc, char **argv) {
+	ROS_INFO("Starting up image converter\n");
 	ros::init(argc, argv, "linefollower_34");
 	ImageConverter ic;
 
