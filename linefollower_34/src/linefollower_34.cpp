@@ -18,8 +18,7 @@ class ImageConverter {
 
 public:
 	ImageConverter():
-	img_height(768),
-	img_width(1280),
+	img_width(768), img_height(1280), // Assumed dimensions of video stream
 	roi_up(0.7), roi_down(1), roi_left(0), roi_right(1),
 	turn_area_width(0.4),
 	threshold_val(100),
@@ -114,17 +113,17 @@ public:
 		geometry_msgs::Twist twist_msg;
 
 		if (last_cx < img_width*turn_area_width) {
-			ROS_INFO("<\tTurning left");
+			ROS_INFO("|<  |\tTurning left");
 			twist_msg.linear.x = 0.75 * lx_max;
 			twist_msg.angular.x = ax_max;
 			
 		} else if ( last_cx > img_width*(1 - turn_area_width) ) {
-			ROS_INFO(">\tTurning right");
+			ROS_INFO("|  >|\tTurning right");
 			twist_msg.linear.x = 0.75 * lx_max;
 			twist_msg.angular.x = -ax_max;
 			
 		} else {
-			ROS_INFO("^\tGoing Straight");
+			ROS_INFO("| ^ |\tGoing Straight");
 			twist_msg.linear.x = lx_max;
 			twist_msg.angular.x = 0;
 		}
