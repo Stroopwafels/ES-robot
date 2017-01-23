@@ -23,6 +23,9 @@ public:
 	roi_up(0.7), roi_down(1), roi_left(0), roi_right(1),
 	turn_area_width(0.4),
 	threshold_val(100),
+	last_r(img_width / 2), last_cx(img_width / 2), last_cy(0),
+	lx_max(0.16), // [m/s]
+	ax_max(1), // [rad/s]
 	it_(nh_) {
 		// Subscribe to the camera/image topic
 		image_sub_ = it_.subscribe("camera/image", 1, &ImageConverter::imageCallback, this);
@@ -83,10 +86,6 @@ public:
 		int min_cx = img_width / 2;
 		int min_cy = 0;
 
-		if (lines.size() == 0) {
-			ROS_WARN("I see no lines");
-		}
-
 		for(size_t i = 0; i<lines.size(); i++) {
   			cv::Vec4i l = lines[i];
   			cv::line( image_lines, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0,0,255), 1, CV_AA);
@@ -102,19 +101,35 @@ public:
   			}
 		}
 
-		// Generate Twist message
+		if (lines.size() == 0) {
+			ROS_WARN("I see no lines");
+			// Continue movement from before the line was lost
+		} else {
+			last_r = min_r;
+			last_cx = min_cx;
+			last_cy = min_cy;
+		}
+
+		// Generate and publish Twist message
 		geometry_msgs::Twist twist_msg;
 
-		if (min_cx < img_width*turn_area_width) {
-			ROS_INFO("< Turning left");
+		if (last_cx < img_width*turn_area_width) {
+			ROS_INFO("<\tTurning left");
+			twist_msg.linear.x = 0.75 * lx_max;
+			twist_msg.angular.x = ax_max;
 			
-		} else if ( min_cx > img_width*(1 - turn_area_width) ) {
-			ROS_INFO("> Turning right");
+		} else if ( last_cx > img_width*(1 - turn_area_width) ) {
+			ROS_INFO(">\tTurning right");
+			twist_msg.linear.x = 0.75 * lx_max;
+			twist_msg.angular.x = -ax_max;
 			
 		} else {
-			ROS_INFO("^ Going Straight");
-
+			ROS_INFO("^\tGoing Straight");
+			twist_msg.linear.x = lx_max;
+			twist_msg.angular.x = 0;
 		}
+
+		twist_pub_.publish(twist_msg);
 		
 		// Create output image
 		cv::line(image_lines, cv::Point(0, min_cy), cv::Point(img_width, min_cy), cv::Scalar(255,0,0), 3, CV_AA);
@@ -142,16 +157,21 @@ private:
 	int img_width; // Nexus 5: img_width = 1280px
 
 	// ROI boundaries 
-	float roi_up; // 0 = upper boundary of image; 1 = lower boundary
-	float roi_down;
-	float roi_left; // 0 = left boundary of image; 1 = right boundary
-	float roi_right;
+	float roi_up, roi_down; // 0 = upper boundary of image; 1 = lower boundary
+	float roi_left, roi_right; // 0 = left boundary of image; 1 = right boundary
 
-	// Turning area width
+	// Turning parameters
 	float turn_area_width; // 0 = No turning areas; 0.5 = turning areas go all the way to the horizontal center of the image
+	int last_r;
+	int last_cx;
+	int last_cy;
 
-	// Filter variables
+	// Filter parameters
 	float threshold_val;
+
+	// Robot parameters
+	double lx_max;
+	double ax_max;
 };
 
 int main(int argc, char **argv) {
