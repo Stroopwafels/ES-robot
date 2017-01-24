@@ -37,7 +37,7 @@ void messageCb(const geometry_msgs::Twist &twist) { // const std_msgs::Empty& to
 
 //ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
 
-ros::Subscriber<geometry_msgs::Twist> sub("/turtle1/cmd_vel", &messageCb );
+ros::Subscriber<geometry_msgs::Twist> sub("/cmd_vel", &messageCb );
 
 void setup()
 { 

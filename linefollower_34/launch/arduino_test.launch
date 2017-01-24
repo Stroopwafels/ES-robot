@@ -3,9 +3,13 @@
 
 	<arg name="port" default="/dev/ttyUSB0" />
 
-	<node pkg= "turtlesim" name="turtlesim_node" type="turtlesim_node"/>
+	<node pkg= "turtlesim" name="turtlesim_node" type="turtlesim_node">
+		<remap from="/turtle1/cmd_vel" to="/cmd_vel"/>
+	</node>
 
-	<node pkg= "turtlesim" name="turtle_teleop_key" type="turtle_teleop_key" output="screen"/>
+	<node pkg= "turtlesim" name="turtle_teleop_key" type="turtle_teleop_key" output="screen">
+		<remap from="/turtle1/cmd_vel" to="/cmd_vel"/>
+	</node>
 
 	<node pkg= "rosserial_python" name="serial_node" type="serial_node.py" args="$(arg port)"/>
 
