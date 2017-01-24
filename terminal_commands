@@ -1,6 +1,0 @@
-Terminal 1: roscore
-Terminal 2: rosrun turtlesim turtlesim_node
-Terminal 3: rosrun turtlesim turtle_teleop_key
-Terminal 4: rosrun rosserial_python serial_node.py /dev/ttyUSB0
-
-bij de laatste /dev/ttyUSB0 hangt af van je arduino port natuurlijk

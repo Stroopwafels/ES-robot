@@ -1,3 +1,11 @@
+/**
+ * Group number: 34
+ * Student 1:
+ * Tom van der Meulen, 4189558
+ * Student 2:
+ * Levi Dekker, 4224175
+ */
+
 // C++ includes
 #include <math.h>
 #include <assert.h>
