@@ -17,24 +17,38 @@
 #define HB_2REV   3
 #define HB_2EN    25
 #define HB_2FWD   2
-#define trigPin 23
-#define echoPin 22
-#define led 13
+#define trigPin   23
+#define echoPin   22
+#define led       13
 
-// Global parameters
-double vmax_ = 0.16;
-double vl_, vr_;
-unsigned long t = millis();
+
+/**
+ * Declarations
+ */
+
+// class NewHardware : public ArduinoHardware {
+//   public: NewHardware():ArduinoHardware(&Serial1 , 57600){};
+// };
 
 // ROS parameters
 ros::NodeHandle nh;
+// ros::NodeHandle_<NewHardware> nh;
 
 //ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
 ros::Subscriber<geometry_msgs::Twist> sub("/cmd_vel", &messageCb );
 
+// Global parameters
+double vmax_ = 0.16;
+double vl_, vr_;
+unsigned long t_ = millis();
+
 // Function declarations
+void clip_v(double *vl, double *vr);
 void convert2motor(geometry_msgs::Twist twist);
-//double distancefactor();
+void messageCb(const geometry_msgs::Twist &twist);
+long getdistance();
+double distancefactor();
+void writespeed(double vl, double vr);
 
 
 /**
@@ -42,14 +56,22 @@ void convert2motor(geometry_msgs::Twist twist);
  */
 
 void clip_v(double *vl, double *vr) {
+  int isclipped = 0;
+
   if (abs(*vl) > vmax_) {
     *vr = *vr * vmax_/ abs(*vl);
     *vl = *vl * vmax_/ abs(*vl);
+    isclipped = 1;
   }
 
   if (abs(*vr) > vmax_) {
     *vl = *vl * vmax_ / abs(*vr);
     *vr = *vr * vmax_ / abs(*vr);
+    isclipped = 1;
+  }
+
+  if (isclipped) {
+    //nh.logwarn("Motor speeds have been scaled down to ensure that they do not exceed vmax");
   }
 }
 
@@ -67,6 +89,7 @@ void convert2motor(geometry_msgs::Twist twist) {
   double vr = (rotsp + lx);
 
   //Serial.println("Hoi");
+  //nh.loginfo("Hoi");
   
   clip_v(&vl, &vr);
   
@@ -75,7 +98,7 @@ void convert2motor(geometry_msgs::Twist twist) {
 }
 
 void messageCb(const geometry_msgs::Twist &twist) { // const std_msgs::Empty& toggle_msg){
-  t = millis();
+  t_ = millis();
   
   convert2motor(twist);
 }
@@ -111,7 +134,7 @@ double distancefactor(){
 }
 
 void writespeed(double vl, double vr) {
-  if (1) { //(millis()-t) < 100
+  if (1) { //(millis()-t_) < 100
     if (vl >= 0) {
       analogWrite(HB_1FWD, 255*vl/vmax_);
       analogWrite(HB_1REV, 0);
