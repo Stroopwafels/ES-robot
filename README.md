@@ -11,7 +11,7 @@ Zorg ervoor dat je ook OpenCV voor ros hebt geïnstalleerd:
 	3. Voer op de android-app bij Robot URI in: http://<je eigen IP>:11311/
 	4. Connect op Android telefoon
 	5. in terminal 2: source devel/setup.bash
-	6. in terminal 2: roslaunch linefollower_34 default.launch
+	6. in terminal 2: roslaunch linefollower_34 default.launch port:=/dev/ttyUSB0
 	
 OF
 	
@@ -34,3 +34,8 @@ OF
 	4. Terminal 4: rosrun rosserial_python serial_node.py /dev/ttyUSB0
 
 	bij de laatste /dev/ttyUSB0 hangt af van je arduino port natuurlijk
+
+OF
+	1. Terminal 1: roscore
+	2. Terminal 2: source devel/setup.bash
+	3. Terminal 2: roslaunch linefollower_34 arduino_test port:=/dev/ttyUSB0

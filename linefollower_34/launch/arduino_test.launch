@@ -1,7 +1,12 @@
 <launch>
 <!-- Launch file for testing the linefollower robot with a keyboard -->
 
+	<arg name="port" default="/dev/ttyUSB0" />
+
 	<node pkg= "turtlesim" name="turtlesim_node" type="turtlesim_node"/>
+
 	<node pkg= "turtlesim" name="turtle_teleop_key" type="turtle_teleop_key" output="screen"/>
-	<node pkg= "rosserial_python" name="serial_node.py" type="serial_node.py" args="/dev/ttyUSB0"/>
+
+	<node pkg= "rosserial_python" name="serial_node" type="serial_node.py" args="$(arg port)"/>
+
 </launch>
