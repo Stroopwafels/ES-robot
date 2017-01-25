@@ -26,16 +26,13 @@
  * Declarations
  */
 
-// class NewHardware : public ArduinoHardware {
-//   public: NewHardware():ArduinoHardware(&Serial1 , 57600){};
-// };
+class NewHardware : public ArduinoHardware {
+  public: NewHardware():ArduinoHardware(&Serial1 , 57600){};
+};
 
 // ROS parameters
-ros::NodeHandle nh;
-// ros::NodeHandle_<NewHardware> nh;
-
-//ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
-ros::Subscriber<geometry_msgs::Twist> sub("/cmd_vel", &messageCb );
+//ros::NodeHandle nh;
+ros::NodeHandle_<NewHardware> nh;
 
 // Global parameters
 double vmax_ = 0.16;
@@ -49,6 +46,9 @@ void messageCb(const geometry_msgs::Twist &twist);
 long getdistance();
 double distancefactor();
 void writespeed(double vl, double vr);
+
+//ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
+ros::Subscriber<geometry_msgs::Twist> sub("/cmd_vel", &messageCb );
 
 
 /**
