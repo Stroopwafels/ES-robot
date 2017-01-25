@@ -23,6 +23,7 @@
 
 #define LX_STRAIGHT 0.3
 #define LX_TURN 0.15
+#define WITH_FILTER 1
 
 class ImageConverter {
 	
@@ -79,11 +80,17 @@ public:
 		image_lines = image_roi;
 
 		// Image filters
-		cv::cvtColor(image_roi, image_grey, CV_RGB2GRAY);
-		//cv::GaussianBlur(image_grey, image_blur, cv::Size(3, 3), 0, 0);
-		cv::blur(image_grey, image_blur, cv::Size(3,3), cv::Point(-1,-1));
-		cv::threshold(image_blur, image_threshold, threshold_val, 255, CV_THRESH_BINARY);
-		
+		if(WITH_FILTER) {
+			cv::cvtColor(image_roi, image_grey, CV_RGB2GRAY);
+			//cv::GaussianBlur(image_grey, image_blur, cv::Size(3, 3), 0, 0);
+			cv::blur(image_grey, image_blur, cv::Size(3,3), cv::Point(-1,-1));
+			cv::threshold(image_blur, image_threshold, threshold_val, 255, CV_THRESH_BINARY);
+		} else {
+			image_grey = image_roi;
+			cv::bilateralFilter(image_grey, image_blur, 3, 3*2, 3/2);
+			image_threshold = image_blur;
+		}
+
 		// Edge detection
 		cv::Canny(image_threshold, image_canny, 50, 200, 3);
 
