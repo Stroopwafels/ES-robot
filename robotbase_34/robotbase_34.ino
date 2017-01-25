@@ -38,6 +38,7 @@ ros::NodeHandle_<NewHardware> nh;
 double vmax_ = 0.16;
 double vl_, vr_;
 unsigned long t_ = millis();
+int time_ok_;
 
 // Function declarations
 void clip_v(double *vl, double *vr);
@@ -99,6 +100,7 @@ void convert2motor(geometry_msgs::Twist twist) {
 
 void messageCb(const geometry_msgs::Twist &twist) { // const std_msgs::Empty& toggle_msg){
   t_ = millis();
+  time_ok_ = 1;
   
   convert2motor(twist);
 }
@@ -159,13 +161,11 @@ void writespeed(double vl, double vr) {
   }
 }
 
-int checkTime() {
+void checkTime() {
   int dt = millis() - t_;
 
-  if (dt < 500) {
-    return 1;
-  } else {
-    return 0;
+  if (dt > 500) {
+    time_ok_ = 0;
   }
 }
 
@@ -185,13 +185,15 @@ void setup()
 
   nh.initNode();
   nh.subscribe(sub);
+
+  time_ok_ = 0;
 }
 
 void loop()
 {  
   nh.spinOnce();
-  int time_ok = checkTime();
+  checkTime();
   double df = (double) distancefactor();
-  writespeed(vl_*df*time_ok, vr_*df*time_ok);
+  writespeed(vl_*df*time_ok_, vr_*df*time_ok_);
   delay(1);
 }
