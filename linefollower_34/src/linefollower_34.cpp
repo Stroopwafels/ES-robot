@@ -123,17 +123,17 @@ public:
 		if (last_cx < img_width*turn_area_width) {
 			ROS_INFO("|<  |\tTurning left");
 			twist_msg.linear.x = 0 * lx_max;
-			twist_msg.angular.x = ax_max;
+			twist_msg.angular.z = ax_max;
 			
 		} else if ( last_cx > img_width*(1 - turn_area_width) ) {
 			ROS_INFO("|  >|\tTurning right");
 			twist_msg.linear.x = 0 * lx_max;
-			twist_msg.angular.x = -ax_max;
+			twist_msg.angular.z = -ax_max;
 			
 		} else {
 			ROS_INFO("| ^ |\tGoing Straight");
 			twist_msg.linear.x = lx_max;
-			twist_msg.angular.x = 0;
+			twist_msg.angular.z = 0;
 		}
 
 		twist_pub_.publish(twist_msg);
