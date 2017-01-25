@@ -21,6 +21,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#define LX_STRAIGHT 0.3
+#define LX_TURN 0.15
+
 class ImageConverter {
 	
 
@@ -122,17 +125,17 @@ public:
 
 		if (last_cx < img_width*turn_area_width) {
 			ROS_INFO("|<  |\tTurning left");
-			twist_msg.linear.x = 0 * lx_max;
+			twist_msg.linear.x = LX_TURN * lx_max;
 			twist_msg.angular.z = ax_max;
 			
 		} else if ( last_cx > img_width*(1 - turn_area_width) ) {
 			ROS_INFO("|  >|\tTurning right");
-			twist_msg.linear.x = 0 * lx_max;
+			twist_msg.linear.x = LX_TURN * lx_max;
 			twist_msg.angular.z = -ax_max;
 			
 		} else {
 			ROS_INFO("| ^ |\tGoing Straight");
-			twist_msg.linear.x = lx_max;
+			twist_msg.linear.x = LX_STRAIGHT * lx_max;
 			twist_msg.angular.z = 0;
 		}
 

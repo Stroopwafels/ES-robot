@@ -121,7 +121,9 @@ double distancefactor(){
   double distance = (double) getdistance();
   double df;
   
-  if (distance < 30) {
+  if (distance < 15) {
+    df = 0;
+  } else if (distance < 30) {
     digitalWrite(led,HIGH);
     df = ( distance)/30;
   }
@@ -157,6 +159,16 @@ void writespeed(double vl, double vr) {
   }
 }
 
+int checkTime() {
+  int dt = millis() - t_;
+
+  if (dt < 500) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 void setup()
 { 
   pinMode(HB_1REV, OUTPUT);
@@ -178,7 +190,8 @@ void setup()
 void loop()
 {  
   nh.spinOnce();
+  int time_ok = checkTime();
   double df = (double) distancefactor();
-  writespeed(vl_*df, vr_*df);
+  writespeed(vl_*df*time_ok, vr_*df*time_ok);
   delay(1);
 }
