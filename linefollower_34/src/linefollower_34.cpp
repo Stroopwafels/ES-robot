@@ -122,12 +122,12 @@ public:
 
 		if (last_cx < img_width*turn_area_width) {
 			ROS_INFO("|<  |\tTurning left");
-			twist_msg.linear.x = 0.75 * lx_max;
+			twist_msg.linear.x = 0 * lx_max;
 			twist_msg.angular.x = ax_max;
 			
 		} else if ( last_cx > img_width*(1 - turn_area_width) ) {
 			ROS_INFO("|  >|\tTurning right");
-			twist_msg.linear.x = 0.75 * lx_max;
+			twist_msg.linear.x = 0 * lx_max;
 			twist_msg.angular.x = -ax_max;
 			
 		} else {
